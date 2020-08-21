@@ -1,5 +1,4 @@
 package com.company;
-
 import java.util.*;
 class TreeNode {
     int val;
@@ -14,6 +13,8 @@ class TreeNode {
  * @date: 2020/8/17
  */
 public class Solution {
+
+
     private void countCharsMap(String s, Map<String, Integer> map) {
         char[] chars = s.toCharArray();
         for (char k: chars) {
@@ -21,32 +22,50 @@ public class Solution {
             if (map.containsKey(key)) {
                 map.put(key, (int)map.get(key) + 1);
             } else {
-                map.put(key, 0);
+                map.put(key, 1);
             }
         }
     }
+
     //substring min length
-    //public String minWindow(String s, String t) {
-    //    Map<String, Integer> needs = new HashMap<>(16), window = new HashMap<>(16);
-    //    char[] chars = t.toCharArray();
-    //    countCharsMap(t, needs);
-    //
-    //    int left = 0, right = 0;
-    //    int valid = 0;
-    //    while (right < s.length()) {
-    //        char c = chars[right];
-    //        right++;
-    //        //window update
-    //
-    //        while (true) { // while window has matched the needs
-    //            char out = chars[left];
-    //            left++;
-    //            //update window
-    //
-    //        }
-    //    }
-    //
-    //}
+    public String minWindow(String s, String t) {
+        if (s.length() < t.length()) return "";
+        Map<String, Integer> needs = new HashMap<>(16), window = new HashMap<>(16);
+        char[] chars = s.toCharArray();
+        countCharsMap(t, needs);
+
+        int left = 0, right = 0, start = 0;
+        int valid = 0, minLen = Integer.MAX_VALUE;// minLen is to filter out cases that never have valid chars
+        while (right < s.length()) {
+            //update right char to window
+            char c = chars[right];
+            String key = String.valueOf(c);
+            if (needs.containsKey(key)) {
+                countCharsMap(key, window);
+                if (window.get(key).equals(needs.get(key))) {
+                    valid++;
+                }
+            }
+            right++;
+            //window update
+            while (valid == needs.size()) {
+                String out = String.valueOf(chars[left]);
+                if (minLen > right - left) {
+                    start = left;
+                    minLen = right - left;
+                }
+                if (window.containsKey(out)) {
+                    window.put(out, window.get(out) - 1);
+                    if (window.get(out) < needs.get(out)) {
+                        valid--;
+                    }
+                }
+                left++;
+                //update window
+            }
+        }
+        return minLen == Integer.MAX_VALUE ? "" : String.valueOf(chars, start, minLen);
+    }
 
 
 
@@ -163,8 +182,15 @@ public class Solution {
         //        int[] nums = {1,2,3};
         //        List<List<Integer>> permute = solution.permute(nums);
         //        System.out.println("hi");
-        int[] nums = {1, 2, 2, 2, 4, 5};
-        int[] res = solution.searchRange(nums, 2);
-        System.out.println("gekk");
+        //int[] nums = {1, 2, 2, 2, 4, 5};
+        //int[] res = solution.searchRange(nums, 2);
+        //System.out.println("gekk");
+
+        //sliding window
+        //minWindow
+        String s = "ADOBECODEBANC";
+        String t = "ABC";
+        String output = solution.minWindow("a", "aa");
+        System.out.println(output);
     }
 }
