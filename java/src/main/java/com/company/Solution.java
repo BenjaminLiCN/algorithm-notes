@@ -13,6 +13,64 @@ class TreeNode {
  * @date: 2020/8/17
  */
 public class Solution {
+    //stock exchange section
+    //1. k = 1, one transaction allowed, state of k is omitted
+    public int maxProfit(int[] prices) { //standard framework
+        int length = prices.length;
+        if (length == 0) return 0;
+        int[][] dp = new int[length][2];
+        for (int i = 0; i < length; i++) {
+            if (i == 0) {
+                dp[0][0] = 0;
+                dp[0][1] = -prices[i];
+            } else {
+                dp[i][0] = Integer.max(dp[i-1][0], dp[i-1][1] + prices[i]);
+                dp[i][1] = Integer.max(dp[i-1][1], dp[i-1][0] - prices[i]);
+            }
+        }
+
+        return dp[length-1][0];
+    }
+    public int maxProfit2(int[] prices) { //space O(1)
+        int length = prices.length;
+        if (length == 0) return 0;
+        int dp_i_0 = 0, dp_i_1 = Integer.MIN_VALUE;
+        for (int i = 0; i < length; i++) {
+            dp_i_0 = Integer.max(dp_i_0, dp_i_1 + prices[i]);
+            dp_i_1 = Integer.max(dp_i_1, -prices[i]);
+        }
+        return dp_i_0;
+    }
+    //2. k = +infinity, no limit
+    public int maxProfitInf(int[] prices) {
+        // because k equals inf, so k is the same as k-1, state of k is omitted
+        int length = prices.length;
+        if (length == 0) return 0;
+        int dp_i_0 = 0, dp_i_1 = Integer.MIN_VALUE;
+        for (int i = 0; i < length; i++) {
+            int temp = dp_i_0;//only diff
+            dp_i_0 = Integer.max(dp_i_0, dp_i_1 + prices[i]);
+            dp_i_1 = Integer.max(dp_i_1, temp - prices[i]);//only diff with last problem
+        }
+        return dp_i_0;
+    }
+    //3. k = inf with cooldown
+    public int maxProfitInfCooldown(int[] prices) {
+        int length = prices.length;
+        if (length == 0) return 0;
+        int[][] dp = new int[length][2];
+        for (int i = 0; i < length; i++) {
+            if (i == 0) {
+                dp[0][0] = 0;
+                dp[0][1] = -prices[i];
+            } else {
+                dp[i][0] = Integer.max(dp[i-1][0], dp[i-1][1] + prices[i]);
+                dp[i][1] = Integer.max(dp[i-1][1], dp[i-1][0] - prices[i]);
+            }
+        }
+
+        return dp[length-1][0];
+    }
 
 
     private void countCharsMap(String s, Map<String, Integer> map) {
