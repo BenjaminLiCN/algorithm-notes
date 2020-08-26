@@ -13,6 +13,48 @@ class TreeNode {
  * @date: 2020/8/17
  */
 public class Solution {
+    //house robber
+    //house robber II circle
+    public int robCircle(int[] nums) {
+        //1. initial
+        int n = nums.length;
+        int[] initial = Arrays.copyOfRange(nums, 0, n - 1);
+        int[] tail = Arrays.copyOfRange(nums, 1, n);
+        return Integer.max(robDpTable(initial), robDpTable(tail));
+        //2. tail
+    }
+
+
+    //house robber I top bottom
+    public int robDpTable(int[] nums){
+        int n = nums.length;
+        int dp_i_1 = 0, dp_i_2 = 0;
+        int dp = 0;//dp[n] == 0
+        for (int i = n-1; i >= 0; i--) {
+            dp = Integer.max(dp_i_1, dp_i_2 + nums[i]);
+            dp_i_2 = dp_i_1;
+            dp_i_1 = dp;
+        }
+        return dp;
+    }
+    //bottom up
+    private int[] robbed;
+    private int dp(int[] nums, int start) {
+        if (start >= nums.length) return 0;
+        if (robbed[start] != -1) return robbed[start];
+        int res = Integer.MIN_VALUE;
+        res = Integer.max(dp(nums, start + 1), dp(nums, start + 2) + nums[start]);
+        robbed[start] = res;
+        return res;
+    }
+    public int robRecWithMemo(int[] nums){
+       int n = nums.length;
+       robbed = new int [n];
+       Arrays.fill(robbed, -1);
+       return dp(nums, 0);
+    }
+
+
     //stock exchange section
     //1. k = 1, one transaction allowed, state of k is omitted
     public int maxProfit(int[] prices) { //standard framework
