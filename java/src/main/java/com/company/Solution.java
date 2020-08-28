@@ -13,6 +13,86 @@ class TreeNode {
  * @date: 2020/8/17
  */
 public class Solution {
+    // OOD
+    //LRU, linked hashmap
+    static class LRUCache{
+        class Node {
+            int key;
+            int value;
+            Node prev;
+            Node next;
+            public Node(int key, int value) {
+                this.key = key;
+                this.value = value;
+            }
+        }
+        private final Node head;
+        private final Node tail;
+        private int capacity;
+        private HashMap<Integer, Node> map;
+        public LRUCache(int capacity) {
+            map = new HashMap<>(16);
+            head = new Node(-1, -1);
+            tail = new Node(-1, -1);
+            head.next = tail;
+            tail.prev = head;
+            this.capacity = capacity;
+        }
+
+        public Integer get(int key) {
+            Node node = map.get(key);
+            if (node != null) {
+                //delete and insert to head
+                delete(node);
+                insertHead(node);
+            }
+            return node == null ? -1 : node.value;
+        }
+
+        public void put(int key, int value) {
+            //absent, create key append to head
+            Node node = map.get(key);
+            if (node == null) {
+                if (map.size() >= capacity) {
+                    //delete the last valid node obsolete
+                    Node temp = tail.prev.prev;
+                    map.remove(tail.prev.key);
+                    temp.next = tail;
+                    tail.prev = temp;
+                }
+                node = new Node(key, value);
+                insertHead(node);
+                map.put(key, node);
+            } else {//present, delete and append to head
+                if (head.next != node) {
+                    delete(node);
+                    insertHead(node);
+                }
+                node.value = value;
+            }
+        }
+
+        public void delete(Node node) {
+            if (node != null && node.key != -1) {
+                Node suc = node.next;
+                Node pre = node.prev;
+                pre.next = suc;
+                suc.prev = pre;
+            }
+        }
+        private void insertHead(Node node) {
+            if (node != null) {
+                Node temp = head.next;
+                head.next = node;
+                node.prev = head;
+                node.next = temp;
+                temp.prev = node;
+            }
+        }
+    }
+
+    // egg drop
+
     //house robber
     //house robber II circle
     public int robCircle(int[] nums) {
@@ -288,9 +368,16 @@ public class Solution {
 
         //sliding window
         //minWindow
-        String s = "ADOBECODEBANC";
-        String t = "ABC";
-        String output = solution.minWindow("a", "aa");
-        System.out.println(output);
+        //String s = "ADOBECODEBANC";
+        //String t = "ABC";
+        //String output = solution.minWindow("a", "aa");
+        //System.out.println(output);
+
+        //LRU cache
+        LRUCache cache = new LRUCache(2);
+        cache.put(1,1);
+        cache.put(2,2);
+        cache.put(3,3);
+        cache.get(1);
     }
 }
