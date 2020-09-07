@@ -1,5 +1,8 @@
 package com.company;
 import java.util.*;
+
+import com.company.ObjectOrientedDesign.LRUCache;
+
 class TreeNode {
     int val;
     TreeNode left;
@@ -8,11 +11,7 @@ class TreeNode {
         this.val = v;
     }
 }
-/*
- * @author: yansu
- * @date: 2020/8/17
- */
-public class Solution {
+class ObjectOrientedDesign {
     // OOD
     //LRU, linked hashmap
     static class LRUCache{
@@ -90,8 +89,35 @@ public class Solution {
             }
         }
     }
-
+}
+/*
+ * @author: yansu
+ * @date: 2020/8/17
+ */
+public class Solution {
     // egg drop
+    private int[][] visited;
+    public int dpEggDrop(int n, int k) {
+        if (k == 0) return k;
+        if (k == 1) return n;
+        if (visited[n][k] != -1) return visited[n][k];
+        int res = Integer.MAX_VALUE;
+        for (int i = 1; i <= n; i++) {
+            res = Integer.min(
+               res , Integer.max(dpEggDrop(i - 1,k - 1), dpEggDrop(n - k, k)) + 1
+            ) ; // choice made
+        }
+        visited[n][k] = res;
+        return res;
+    }
+    public int superEggDrop(int K, int N) {
+        visited = new int[N+1][K+1];
+        int[] temp = new int[K + 1];
+        Arrays.fill(temp, -1);
+        Arrays.fill(visited, temp);
+        return dpEggDrop(N, K);
+    }
+
 
     //house robber
     //house robber II circle
@@ -372,7 +398,6 @@ public class Solution {
         //String t = "ABC";
         //String output = solution.minWindow("a", "aa");
         //System.out.println(output);
-
         //LRU cache
         LRUCache cache = new LRUCache(2);
         cache.put(1,1);
