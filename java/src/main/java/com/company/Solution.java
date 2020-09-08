@@ -90,11 +90,122 @@ class ObjectOrientedDesign {
         }
     }
 }
+class UnionFind {
+    /*
+    *
+    * use array to implement the unionfind idea
+    *
+     */
+    // elements count
+    private int count;
+    // x's parent is parent[x]
+    private int[] parent;
+    public UnionFind(int n) {
+        this.count = n;
+        parent = new int[n];
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;// let each element points to themselves
+        }
+    }
+    //union operation connects p's parent to q's parent
+    public void union(int p, int q) {
+        int rootP = find(p);
+        int rootQ = find(q);
+        if (rootP == rootQ)
+            return;
+        //merge two trees
+        parent[rootP] = rootQ;
+        //or
+        //parent[rootQ] = rootP;
+        count--;
+    }
+
+    //main time complexity here, worst N if the tree is not regulated
+    public int find(int x) {
+        //until the very top root's parent is root itself
+        while(parent[x] != x) {
+            parent[x] = parent[parent[x]];// with this optimisation, tc is O(1)
+            x = parent[x];
+        }
+        return x;
+    }
+
+    public boolean isConnected(int p, int q) {
+        return find(p) == find(q);
+    }
+
+}
 /*
  * @author: yansu
  * @date: 2020/8/17
  */
 public class Solution {
+    //flodfill, minesweep's algorithm
+
+    // union find problems
+    // problem 130, find wrapped area
+    public void solve(char[][] board) {
+        // see 'O's as children of the same parent, so the 'O's in the middle are not connected to dummy
+        if (board.length == 0) return;
+        int rows = board.length;
+        int cols = board[0].length;
+        //extra space reserved for dummy
+        UnionFind uf = new UnionFind(rows * cols + 1);
+        int dummy = rows * cols;
+        // for all cells on the boundary, if 'O', union with dummy
+        for (int i = 0; i < rows; i++) {
+            if (board[i][0] == 'O') uf.union(i*cols,dummy);
+            if (board[i][cols - 1] == 'O') uf.union(i*cols+cols-1,dummy);
+        }
+        for (int i = 0; i < cols; i++) {
+            if (board[0][i] == 'O') uf.union(i, dummy);
+            if (board[rows - 1][i] == 'O') uf.union(( rows - 1 ) * cols + i, dummy);
+        }
+        // the rest that is still 'O', union with adjacent 'O's
+        int[][] direction = {{0,1},{1,0},{0,-1},{-1,0}};
+        for (int i = 1; i < rows - 1; i++) {
+            for (int j = 1; j < cols - 1; j++) {
+                if (board[i][j] == 'O') {
+                    for (int k = 0; k < 4; k++) {
+                        int x = direction[k][0] + i;
+                        int y = direction[k][1] + j;
+                        if (board[x][y] == 'O') {
+                            uf.union(x * cols + y, i * cols + j);
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = 1; i < rows - 1; i++) {
+            for (int j = 1; j < cols - 1; j++) {
+                if (board[i][j] == 'O')
+                    if(!uf.isConnected(i * cols + j, dummy)) {
+                        board[i][j] = 'X';
+                    }
+            }
+        }
+    }
+    //leetcode-cn problem 990
+    public boolean equationsPossible(String[] equations) {
+        // for all the == equations, union those characters;
+        UnionFind uf = new UnionFind(26);
+        for (String equation : equations) {
+            if (equation.charAt(1) == '=') {
+                char p = equation.charAt(0);
+                char q = equation.charAt(3);
+                uf.union(p - 'a', q - 'a');
+            }
+        }
+        // for all the != equations, if the union already exists, return false
+        for (String equation : equations) {
+            if (equation.charAt(1) == '!') {
+                char p = equation.charAt(0);
+                char q = equation.charAt(3);
+                if (uf.isConnected(p - 'a', q - 'a')) return false;
+            }
+        }
+        return true;
+    }
     // egg drop
     private int[][] visited;
     public int dpEggDrop(int n, int k) {
