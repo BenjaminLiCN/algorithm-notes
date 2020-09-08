@@ -141,6 +141,33 @@ class UnionFind {
  */
 public class Solution {
     //flodfill, minesweep's algorithm
+    public char[][] updateBoard(char[][] board, int[] click) {
+        int x = click[0];
+        int y = click[1];
+        if (board[x][y] == 'M') {
+            board[x][y] = 'X';
+            return board;
+        } else {
+            int mines = nearMines(board, x, y);
+            if (mines > 0) {
+                board[x][y] = (char) mines;
+            } else {
+                fill(board, x, y);
+            }
+            return board;
+        }
+        //mark board
+    }
+
+    private int nearMines(char[][] board, int x, int y) {
+        int[][] direction = {{0,1},{1,0},{-1,0},{0,-1},{1,1},{1,-1},{-1,1},{-1,-1}};
+        for (int i = 0; i < direction.length; i++) {
+            int m = direction[i][0] + x;
+            int n = direction[i][1] + y;
+            if (board[m][n])
+        }
+        return 0;
+    }
 
     // union find problems
     // problem 130, find wrapped area
