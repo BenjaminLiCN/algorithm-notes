@@ -140,7 +140,30 @@ class UnionFind {
  * @date: 2020/8/17
  */
 public class Solution {
-    //flodfill, minesweep's algorithm
+    //flodfill, minesweeping, color fill
+    public int[][] floodFill(int[][] image, int sr, int sc, int newColor) {
+        //1. floodfill framework
+        int origColor = image[sr][sc];
+        fill(image, sr, sc, origColor, newColor);
+        return image;
+        //2. use backtracking to avoid infinite loop when newColor == originalColor
+    }
+    private void fill(int[][] image, int sr, int sc, int origColor, int newColor) {
+        if (!isValid(image, sr, sc)) return;
+        if (image[sr][sc] != origColor || image[sr][sc] == -1) return;
+        image[sr][sc] = -1;
+        fill(image, sr + 1, sc, origColor, newColor);
+        fill(image, sr - 1, sc, origColor, newColor);
+        fill(image, sr, sc + 1, origColor, newColor);
+        fill(image, sr, sc - 1, origColor, newColor);
+        image[sr][sc] = newColor;
+    }
+
+    private boolean isValid(int[][] image, int sr, int sc) {
+        return sr >= 0 && sr < image.length && sc < image[0].length && sc >= 0;
+    }
+
+    //minesweep
     public char[][] updateBoard(char[][] board, int[] click) {
         int x = click[0];
         int y = click[1];
@@ -152,7 +175,7 @@ public class Solution {
             if (mines > 0) {
                 board[x][y] = (char) mines;
             } else {
-                fill(board, x, y);
+                //fill(board, x, y);
             }
             return board;
         }
@@ -160,12 +183,12 @@ public class Solution {
     }
 
     private int nearMines(char[][] board, int x, int y) {
-        int[][] direction = {{0,1},{1,0},{-1,0},{0,-1},{1,1},{1,-1},{-1,1},{-1,-1}};
-        for (int i = 0; i < direction.length; i++) {
-            int m = direction[i][0] + x;
-            int n = direction[i][1] + y;
-            if (board[m][n])
-        }
+        //int[][] direction = {{0,1},{1,0},{-1,0},{0,-1},{1,1},{1,-1},{-1,1},{-1,-1}};
+        //for (int i = 0; i < direction.length; i++) {
+        //    int m = direction[i][0] + x;
+        //    int n = direction[i][1] + y;
+        //    if (board[m][n])
+        //}
         return 0;
     }
 
