@@ -1,5 +1,7 @@
 package com.company;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.company.ObjectOrientedDesign.LRUCache;
 
@@ -140,6 +142,59 @@ class UnionFind {
  * @date: 2020/8/17
  */
 public class Solution {
+    //https://leetcode-cn.com/problems/binary-tree-cameras/
+    public int minCameraCover(TreeNode root) {
+        //dp state: set, not set but covered, not set not covered
+        //root has camera
+        return 0;
+    }
+    //watched doesnt aware if any children monitor root
+    private int dpCam(TreeNode root, boolean placeCam, boolean watched) {
+        //if (watched)
+        //if (root == null) return 0;
+        //if (placeCam) {
+        //    int cams = 1 + dpCam(root.left, false, true) + dpCam(root.right, false, true);
+        //} else {
+        //    if (watched) {
+        //        int cams =
+        //    } else {
+        //
+        //    }
+        //}
+        return 0;
+    }
+
+    //https://leetcode-cn.com/problems/path-sum-ii/
+    private List<List<Integer>> resOfPathSum;
+    private LinkedList<Integer> tempSum;
+    public List<List<Integer>> pathSum2(TreeNode root, int sum) {
+        resOfPathSum = new ArrayList<>();
+        tempSum = new LinkedList<>();
+        if (root == null) return resOfPathSum;
+        findSumPath(root, sum);
+        return resOfPathSum;
+    }
+    public void findSumPath(TreeNode root, int sum) {
+        if (root == null) return;
+        tempSum.addLast(root.val);
+        if (root.left == null && root.right == null && root.val == sum) {
+            resOfPathSum.add(new ArrayList<>(tempSum));
+        }
+        findSumPath(root.left, sum - root.val);
+        findSumPath(root.right, sum - root.val);
+        tempSum.removeLast();
+    }
+    //https://leetcode-cn.com/problems/path-sum-iii/
+    public int pathSum(TreeNode root, int sum) {
+        if (root == null) return 0;
+        return countPath(root, sum) + pathSum(root.left, sum - root.val) + pathSum(root.right, sum - root.val);
+    }
+
+    private int countPath(TreeNode root, int sum) {
+        if (sum == 0) return 1;
+        if (root == null) return 0;
+        return countPath(root.left, sum - root.val) + countPath(root.right, sum - root.val);
+    }
     //flodfill, minesweeping, color fill
     public int[][] floodFill(int[][] image, int sr, int sc, int newColor) {
         //1. floodfill framework
@@ -167,6 +222,7 @@ public class Solution {
     public char[][] updateBoard(char[][] board, int[] click) {
         int x = click[0];
         int y = click[1];
+        String a = "";
         if (board[x][y] == 'M') {
             board[x][y] = 'X';
             return board;
@@ -175,12 +231,14 @@ public class Solution {
             if (mines > 0) {
                 board[x][y] = (char) mines;
             } else {
-                //fill(board, x, y);
+                mineSweepFill(board, x, y);
             }
             return board;
         }
         //mark board
     }
+
+    private void mineSweepFill(char[][] board, int x, int y) {}
 
     private int nearMines(char[][] board, int x, int y) {
         //int[][] direction = {{0,1},{1,0},{-1,0},{0,-1},{1,1},{1,-1},{-1,1},{-1,-1}};
@@ -281,6 +339,25 @@ public class Solution {
 
 
     //house robber
+    //house robber III
+    /*
+    在上次打劫完一条街道之后和一圈房屋后，小偷又发现了一个新的可行窃的地区。这个地区只有一个入口，我们称之为“根”。 除了“根”之外，每栋房子有且只有一个“父“房子与之相连。一番侦察之后，聪明的小偷意识到“这个地方的所有房屋的排列类似于一棵二叉树”。 如果两个直接相连的房子在同一天晚上被打劫，房屋将自动报警。计算在不触动警报的情况下，小偷一晚能够盗取的最高金额。
+
+    private int dp3(TreeNode start) {
+        if (start == null) return 0;
+        int res = Integer.MIN_VALUE;
+
+        //a-bc-defg a-defg b c
+        int left = dp3(root.left);
+        int right = dp3(root.right);
+
+        return result;
+    }
+    public int robIII(TreeNode root) {
+        if (root == null) return 0;
+        return dp3(root);
+    }*/
+
     //house robber II circle
     public int robCircle(int[] nums) {
         //1. initial
@@ -565,5 +642,13 @@ public class Solution {
         cache.put(2,2);
         cache.put(3,3);
         cache.get(1);
+
+        String words = "<span class=\"read-count\">阅读数：641</span>";
+        String regex = ".*?(\\d+)(?=</span>)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(words);
+        while (matcher.find()) {
+            System.out.println(matcher.group());
+        }
     }
 }

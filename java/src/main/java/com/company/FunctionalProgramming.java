@@ -3,26 +3,34 @@ package com.company;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * @author: yansu
  * @date: 2020/9/11
  */
-public class FunctionalServiceTester {
-    private final <T> int testTaskQPS(Runnable task) {
-        int count = 0;
-        long start = System.currentTimeMillis();
-        long end = 1000;
-        while (System.currentTimeMillis() - start <= end) {
-            try {
-                task.run();
-            } catch (Exception e) {
+public class FunctionalProgramming {
+    //Predicate, Consumer, Supplier
+    public void Vessels() {
+        //Predicate.and() & Predicate.or() generate new Predicate objects receiving dynamic methods
+        Predicate<String> notEmpty = (String s) -> !s.isEmpty();
+        notEmpty.and(s -> s.length() > 3);
+        Consumer<String> printOut = System.out::println;
+        IntStream.rangeClosed(1, 100).boxed() .flatMap(a ->
+            IntStream.rangeClosed(a, 100)
+                .filter(b -> Math.sqrt(a*a + b*b) % 1 == 0) .mapToObj(b ->
+                new int[]{a, b, (int)Math.sqrt(a * a + b * b)})
+        );
+        List<String> list = new ArrayList<>();
 
-            }
-            count++;
-        }
-        return count;
     }
 
     //Function::apply, compose, andThen
@@ -46,6 +54,12 @@ public class FunctionalServiceTester {
     private void functionalInterfaceTest() {
         Hello hello = param -> param + " world";
         System.out.println(hello.msg("hello"));
+    }
+
+    //ascending order
+    public <K, V extends Comparable<? super V>> List<Entry<K, V>> sortMapByValue(Map<K, V> map) {
+        Stream<Entry<K, V>> ascendingStream = map.entrySet().stream().sorted(Entry.comparingByValue());
+        return ascendingStream.collect(Collectors.toList());
     }
 
     public static void main(String[] args) {
