@@ -1,5 +1,6 @@
 package com.company;
 
+
 /**
  * @author: yansu
  * @date: 2020/10/14
@@ -49,14 +50,29 @@ public class Palindrome {
 
     }
     //longest palindrome
+    //even number alphabets
+    public int longestPalindrome(String s) {
+        int[] counter = new int[52];
+        for (char c : s.toCharArray()) {
+            counter[c - 'A'] += 1;
+        }
+        int res = 0;
+        for (int n : counter) {
+            if (n == 0) continue;
+            res += n % 2 == 0 ? n : n - 1;
+        }
+        return res + 1;
+    }
+    public void reorderList(ListNode head) {
 
+    }
     public static void main(String[] args) {
         new Palindrome().isPalindrome(121);
         long start = System.currentTimeMillis();
         //int length = String.valueOf(1231412456).length();
         int length = (int) StrictMath.log10(1231412456);
         long end = System.currentTimeMillis();
-        System.out.println(length + " " + (end - start));
+        System.out.println(new Palindrome().longestPalindrome("aaaAaaaa"));
 
     }
 }

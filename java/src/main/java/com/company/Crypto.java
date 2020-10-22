@@ -47,7 +47,7 @@ public class Crypto {
 
 
     public static void main(String[] args) {
-        String plainString = "12345";
+        String plainString = "555566666";
         System.out.println("Enter String : " + plainString);
 
         String encryptStr   = encrypt(plainString);
