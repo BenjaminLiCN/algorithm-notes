@@ -1,9 +1,17 @@
 package com.company;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
+import java.util.Stack;
+
+import com.sun.source.tree.Tree;
 
 // Definition for a Node.
 class Node {
@@ -219,6 +227,137 @@ public class DailyChallenge {
     }
 
     //https://leetcode-cn.com/problems/partition-labels/
+    public List<Integer> partitionLabels(String S) {
+        //char: {firstIdx: ?, lastIdx: ?}; then replace the map array with last idx.
+        int[] map = new int[S.length()];
+        Map<Character, Integer[]> charsMap = new HashMap<>(16);
+        for (int i = 0; i < S.length(); i++) {
+            if (charsMap.containsKey(S.charAt(i))) {
+                Integer[] rec = charsMap.get(S.charAt(i));
+                rec[1] = i;
+                charsMap.put(S.charAt(i), rec);
+            } else {
+                Integer[] rec = new Integer[2];
+                rec[0] = i;
+                rec[1] = i;
+                charsMap.put(S.charAt(i), rec);
+            }
+        }
+        //go through charsmap
+        charsMap.forEach((key, value) -> {
+            map[value[0]] = value[1];
+            map[value[1]] = value[1];
+        });
+        int start = 0;
+        List<Integer> res = new ArrayList<>();
+        int end = charsMap.get(S.charAt(start))[1];
+        if (end == S.length() - 1) res.add(end+1);
+        while (end != S.length() - 1) {
+            int max = 0;
+            for (int i = start + 1; i <= end; i++) {
+                if (map[i] > map[start] && map[i] > max) {
+                    end = map[i];
+                    max = map[i];
+                }
+            }
+            res.add(end - start + 1);
+            start = end + 1;
+            if (start == S.length()) return res;
+            end = charsMap.get(S.charAt(start))[1];
+            if (end == S.length() - 1) {
+                res.add(end - start + 1);
+                return res;
+            }
+        }
+        return res;
+        //biggest last index within the same char
+
+    }
+
+    //https://leetcode-cn.com/problems/how-many-numbers-are-smaller-than-the-current-number/
+    public int[] smallerNumbersThanCurrent(int[] nums) {
+        int[] sorted = Arrays.copyOf(nums, nums.length);
+        Arrays.sort(sorted);
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(sorted[0], 0);
+        int sameCount = 1;
+        for (int i = 1; i < nums.length; i++) {
+            if (sorted[i] == sorted[i - 1]) {
+                sameCount++;
+            } else {
+                map.put(sorted[i], map.get(sorted[i - 1]) + sameCount);
+                sameCount = 1;
+            }
+        }
+        int idx = 0;
+        for (int n : nums) {
+            sorted[idx++] = map.get(n);
+        }
+        return sorted;
+
+    }
+
+    //iterative solution
+    public List<Integer> preorderTraversal(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        List<Integer> res = new ArrayList<>();
+        while (root != null || !stack.empty()) {
+            while (root != null) {
+                res.add(root.val);
+                stack.push(root);
+                root = root.left;
+            }
+            if (root == null && !stack.empty()) {
+                root = stack.pop().right;
+            }
+
+        }
+        return res;
+    }
+    public List<Integer> inorderTraversal(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        List<Integer> res = new ArrayList<>();
+        while (root != null || !stack.empty()) {
+            while (root != null) {
+                stack.push(root);
+                root = root.left;
+            }
+            if (!stack.empty()) {
+                TreeNode mid = stack.pop();
+                res.add(mid.val);
+                root = mid.right;
+            }
+        }
+        return res;
+    }
+    public List<Integer> postorderTraversal(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        List<Integer> res = new ArrayList<>();
+        TreeNode pre = null;
+        while (root != null || !stack.empty()) {
+            while (root != null) {
+                stack.push(root);
+                root = root.left;
+            }
+            root = stack.peek();
+            if (pre == root.right || root.right == null) {
+                pre = root;
+                res.add(stack.pop().val);
+                root = null;
+            } else {
+                root = root.right;
+            }
+        }
+        return res;
+    }
+    public boolean uniqueOccurrences(int[] arr) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int n : arr) {
+            map.put(n, map.getOrDefault(n, 0) + 1);
+        }
+        return map.size() == new HashSet<>(map.values()).size();
+
+    }
 
     public static void main(String[] args) {
         //int[] test= {-4,-1,0,3,10};
@@ -256,8 +395,8 @@ public class DailyChallenge {
         //    System.out.println(dummy.val);
         //    dummy = dummy.next;
         //}
-        boolean res = new DailyChallenge().isLongPressedName("laidez","laideccc");
-        System.out.println(res);
+        int[] nums = {8,1,2,2,3};
+        new DailyChallenge().smallerNumbersThanCurrent(nums);
     }
 
 }

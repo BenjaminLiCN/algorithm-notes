@@ -163,7 +163,22 @@ public class DpLearner {
         }
         return dp[0];
     }
+
+    //knapsack https://zhuanlan.zhihu.com/p/93857890
+
     public static void main(String[] args) {
+        //01 knapsack
+        //dp[i][j] = Integer.max(dp[i-1][j], dp[i-1][j-w[i]] + v[i]);
+        //full knapsack
+        // dp[i][j] = Integer.max(dp[i-1][j], dp[i][j-w[i]] + v[i]);
+        //bounded knapsack n[i], number of i-th item
+        //add a for loop
+        Integer a = 100;
+        Integer b = 100;
+        System.out.println(a==b);
+        a = 188;
+        b = 188;
+        System.out.println(a==b);
         int[] nums = {2,3,1,1,4};
         String s = "aabb";
         String front = s.substring(0, s.length() / 2);
