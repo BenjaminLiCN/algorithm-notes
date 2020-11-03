@@ -165,7 +165,43 @@ public class DpLearner {
     }
 
     //knapsack https://zhuanlan.zhihu.com/p/93857890
-
+    public boolean canPartition(int[] nums) {
+        int sum = Arrays.stream(nums).sum();
+        if (sum % 2 == 1) return false;
+        //find elements that can fit in a knapsack of size sum/2
+        boolean[] dp = new boolean[sum / 2 + 1];
+        for (int i = 1; i <= nums.length; i++) {
+            for (int j = sum / 2; j >= nums[i-1]; j--) {
+                dp[j] = dp[j] || dp[j-nums[i-1]];
+            }
+        }
+        return dp[sum/2];
+    }
+    public int coinChange(int[] coins, int amount) {
+        int[] dp = new int[amount+1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
+        for (int i = 1; i <= coins.length; i++) {
+            for (int j = coins[i-1]; j <= amount; j++) {
+                if(dp[j] - 1 > dp[j - coins[i-1]])
+                    dp[j] = 1 + dp[j - coins[i-1]];
+            }
+        }
+        return dp[amount] == Integer.MAX_VALUE ? -1 : dp[amount];
+    }
+    public int findTargetSumWays(int[] nums, int S) {
+        int sum = Arrays.stream(nums).sum();
+        int target = (sum + S) / 2;
+        if (S > sum || sum < -S) return 0;
+        if ((S + sum) % 2 == 1) return 0;
+        int[] dp = new int[target + 1];
+        dp[0] = 1;
+        for (int i = 1; i <= nums.length; i++)
+            for (int j = target; j >= nums[i-1]; j--) {
+                dp[j] = dp[j] + dp[j-nums[i-1]];
+            }
+        return dp[target];
+    }
     public static void main(String[] args) {
         //01 knapsack
         //dp[i][j] = Integer.max(dp[i-1][j], dp[i-1][j-w[i]] + v[i]);

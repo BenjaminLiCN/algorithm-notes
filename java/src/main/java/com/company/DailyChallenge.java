@@ -359,6 +359,42 @@ public class DailyChallenge {
 
     }
 
+    public int sumNumbers(TreeNode root) {
+        if (root == null) return 0;
+        backtrack(root, 0);
+        return res;
+
+    }
+    private int res = 0;
+    private void backtrack(TreeNode root, int sum) {
+        if (root == null) return;
+        sum = 10 * sum + root.val;
+        if (root.left == null && root.right == null) {
+            res += sum;
+            return;
+        }
+        backtrack(root.left, sum);
+        backtrack(root.right, sum);
+    }
+    public int[] intersection(int[] nums1, int[] nums2) {
+        HashSet<Integer> set1 = new HashSet<>();
+        for (int n : nums1) {
+            set1.add(n);
+        }
+        HashSet<Integer> set2 = new HashSet<>();
+        for (int n : nums2) {
+            set2.add(n);
+        }
+        Set<Integer> res = new HashSet<>();
+        for (int e : set1) {
+            if (set2.contains(e)) {
+                res.add(e);
+            }
+        }
+        return res.stream().mapToInt(Integer::intValue).toArray();
+
+    }
+
     public static void main(String[] args) {
         //int[] test= {-4,-1,0,3,10};
         //int[] ints = new DailyChallenge().sortedSquares(test);
