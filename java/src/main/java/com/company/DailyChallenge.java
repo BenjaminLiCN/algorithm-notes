@@ -2,14 +2,17 @@ package com.company;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.sun.source.tree.Tree;
 
@@ -41,6 +44,7 @@ class Node {
 public class DailyChallenge {
     //{-4,-1,0,3,10}
     public int[] sortedSquares(int[] A) {
+        CopyOnWriteArrayList
         //dual pointer as max value is either the first or the last element's square
         int start = 0;
         int end = A.length - 1;
@@ -395,6 +399,126 @@ public class DailyChallenge {
 
     }
 
+    public boolean validMountainArray(int[] A) {
+        if (A.length < 3) return false;
+        int start = A.length / 2;
+        while (start + 1 < A.length && A[start] <= A[start + 1]) {
+            if (A[start] == A[start + 1]) return false;
+            start++;
+        }
+        while (start > 0 && A[start] <= A[start - 1]) {
+            if (A[start] == A[start - 1]) return false;
+            start--;
+        }
+        if (start == A.length - 1 || start == 0) {
+            return false;
+        }
+        int left = start - 1, right = start + 1;
+        while (left != 0 || right != A.length - 1) {
+            if (left > 0) {
+                if (A[left - 1] >= A[left]) return false;
+                left--;
+            }
+            if (right + 1 < A.length) {
+                if (A[right+1] >= A[right]) return false;
+                right++;
+            }
+        }
+        return true;
+    }
+    public int count(TreeNode root) {
+        if (root == null) return 0;
+        return 1 + count(root.right) + count(root.left);
+    }
+
+    public int[][] kClosest(int[][] points, int K) {
+        PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> o2[0] * o2[0] +o2[1] * o2[1] - o1[0] * o1[0] - o1[1] * o1[1]);
+        for (int[] pos : points) {
+            if (pq.size() < K)
+                pq.offer(pos);
+            else if (pq.comparator().compare(pos, pq.peek()) > 0) {
+                pq.poll();
+                pq.offer(pos);
+            }
+        }
+        return pq.toArray(new int[][]{});
+
+    }
+    //1234
+    //1243
+    //1324
+    //1342
+    //1423
+    //1432
+    //2134
+    //231
+    //312
+    public void nextPermutation(int[] nums) {
+        // back to front search for first ascending pair, swap, if none found, sort
+        int minPos = -1;
+        for (int i = nums.length - 1; i >= 0; i--) {
+            if (i != 0) {
+                if (nums[i] > nums[i-1]) {
+                    //record a min
+                    for (int j = nums.length - 1; j >= i; j--) {
+                        if (nums[j] > nums[i-1]) {
+                            minPos = j;
+                            break;
+                        }
+                    }
+                    swapPos(nums, i-1, minPos);
+                    Arrays.sort(nums, i, nums.length);
+                    return;
+                }
+            } else {
+                Arrays.sort(nums);
+            }
+        }
+    }
+    private void swapPos(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+    //public int[][] insert(int[][] intervals, int[] newInterval) {
+    //    if (intervals.length == 0) return intervals;
+    //    //right/left < all intervals, left in middle, left > all intervals
+    //    int left = newInterval[0], right = newInterval[1];
+    //    if (right < intervals[0][0] || left > intervals[intervals.length - 1][1] ) {
+    //        return intervals;
+    //    }
+    //    //1. left is the new lower boundry
+    //    //2. left is not
+    //    //3. right is
+    //    //4. right is not
+    //    //5. left-right has not intersection
+    //    //leftPos[0] is whether in bound
+    //    //leftPos[1] is index of interval
+    //    int[] leftPos = new int[2];
+    //
+    //}[4,2,5,7]
+    public int[] sortArrayByParityII(int[] A) {
+        int cur = 0, it = 0;
+        while (cur < A.length) {
+            if (isGood(A, cur, cur)) {
+                cur++;
+                it = cur;
+            } else {
+                while (!isGood(A, cur, it)) {
+                    it++;
+                }
+                int temp = A[cur];
+                A[cur] = A[it];
+                A[it] = temp;
+            }
+        }
+        return A;
+    }
+    private boolean isGood(int[] A, int cur, int it) {
+        return (A[it] & 1) == 0 && (cur & 1) == 0 || (A[it] & 1) == 1 && (cur & 1) == 1;
+    }
+
+
     public static void main(String[] args) {
         //int[] test= {-4,-1,0,3,10};
         //int[] ints = new DailyChallenge().sortedSquares(test);
@@ -431,8 +555,9 @@ public class DailyChallenge {
         //    System.out.println(dummy.val);
         //    dummy = dummy.next;
         //}
-        int[] nums = {8,1,2,2,3};
-        new DailyChallenge().smallerNumbersThanCurrent(nums);
+        int[] nums = {4,2,5,7};
+        int[][] input = {{-5, 4}, {-6, -5}, {4, 6}};
+        new DailyChallenge().sortArrayByParityII(nums);
     }
 
 }
